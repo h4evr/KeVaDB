@@ -52,7 +52,7 @@ void Database::close() {
 	Driver* drv = Driver::getInstance();
 	
 	unsigned int num_indexes = this->files.size(), key = 0;	
-	map<unsigned int, FileHolder*>::iterator it = this->files.begin();
+	std::map<unsigned int, FileHolder*>::iterator it = this->files.begin();
 	FILE* idx = fopen(index_filename, "wb");
 	
 	fwrite((unsigned char*)&num_indexes, 1, sizeof(unsigned int), idx);
@@ -75,7 +75,7 @@ void Database::close() {
 
 void Database::set(string key, string value) {
 	unsigned int hash_key = Database::hashfunc(key.c_str());
-	map<unsigned int, FileHolder*>::iterator it = this->files.find(hash_key);
+	std::map<unsigned int, FileHolder*>::iterator it = this->files.find(hash_key);
 	
 	FileHolder* tmp;
 	
@@ -210,6 +210,29 @@ FileHolder* Database::read_file_info(FILE* f) {
 	}
 	
 	return orig;
+}
+
+list<std::pair<string,string> > Database::filter(bool(*filterfunc)(string key, string value)) {
+	list<std::pair<string,string> > result;
+	FileHolder* tmp;
+	string tmpkey, tmpvalue;
+	std::map<unsigned int, FileHolder*>::iterator it = this->files.begin();
+	
+	for(; it != this->files.end(); ++it) {
+		tmp = it->second;
+		while(tmp) {
+			tmpkey = tmp->key;
+			tmpvalue = (char*)tmp->file->getContents();
+			
+			if(filterfunc(tmpkey, tmpvalue)) {
+				result.push_back(std::pair<string, string>(tmpkey, tmpvalue));
+			}
+			
+			tmp = tmp->next;
+		}
+	}
+	
+	return result;
 }
 
 /*MurMur v2*/

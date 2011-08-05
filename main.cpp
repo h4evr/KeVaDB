@@ -51,13 +51,33 @@ void read_test(Database* db) {
 	cout << "Read test: Took " << total_time << " seconds" << endl;
 }
 
+bool filterfunc(string key, string value) {
+	return (key.find("_123") != string::npos);
+}
+
+void filter_test(Database* db) {
+	double total_time, start_time = getCurrentTime();
+		
+	list<std::pair<string, string> > results = db->filter(filterfunc);
+	list<std::pair<string, string> >::iterator it = results.begin();
+	
+	total_time = getCurrentTime() - start_time;
+	
+	for(; it != results.end(); ++it) {
+		cout << it->first << endl;
+	}
+	
+	cout << "Filter test: Took " << total_time << " seconds" << endl;
+}
+
 int main(int argc, char **argv) {
 	Database db;
 	
 	db.open("teste");
 	
-	insert_test(&db);
-	read_test(&db);
+	//insert_test(&db);
+	//read_test(&db);
+	filter_test(&db);
 	
 	db.close();
 	

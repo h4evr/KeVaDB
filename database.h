@@ -56,6 +56,7 @@ public:
 	void set(string key, string value);
 	char* get(string key);
 	
+	list<std::pair<string,string> > filter(bool(*filterfunc)(string key, string value));
 private:
 	char* index_filename;
 	
@@ -63,7 +64,7 @@ private:
 	FileHolder* read_file_info(FILE* f);
 	
 	static unsigned int hashfunc(const char* key);
-	map<unsigned int, FileHolder*> files;
+	std::map<unsigned int, FileHolder*> files;
 };
 
 #endif
