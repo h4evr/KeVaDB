@@ -104,6 +104,9 @@ void Database::set(string key, string value) {
 char* Database::get(string key) {
 	FileHolder* tmp = this->files[Database::hashfunc(key.c_str())];
 	if(tmp) {
+		if(!tmp->next)
+			return (char*)tmp->file->getContents();
+		
 		while(tmp) {
 			if(strcmp(tmp->key, key.c_str()) == 0)
 				return (char*)tmp->file->getContents();
