@@ -1,0 +1,5 @@
+-- KeVaDB --
+
+Simple Key-Value storage database implemented in C++.
+
+Author: Diogo Costa <costa.h4evr@gmail.com>
