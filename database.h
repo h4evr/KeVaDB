@@ -13,38 +13,6 @@ using std::string;
 #include <map>
 using std::map;
 
-class FileHolder {
-public:
-	FileHolder(const char* key, File* file) {
-		size_t len = strlen(key) + 1;
-		this->key = (char*)malloc(len);
-		memcpy(this->key, key, len);
-		this->file = file;
-		this->next = NULL;
-	}
-	
-	~FileHolder() {
-		if(key) {
-			free(key);
-			key = NULL;
-		}
-		
-		if(file) {
-			delete file;
-			file = NULL;
-		}
-		
-		if(next) {
-			delete next;
-			next = NULL;
-		}
-	}
-	
-	char* key;
-	File* file;
-	FileHolder* next;
-};
-
 class Database {
 public:
 	Database();
@@ -59,12 +27,11 @@ public:
 	list<std::pair<string,string> > filter(bool(*filterfunc)(string key, string value));
 private:
 	char* index_filename;
+	std::map<string, File*> files;
 	
-	void write_file_info(FILE* dst, FileHolder* f);
-	FileHolder* read_file_info(FILE* f);
+	void write_file_info(FILE* dst, File* f);
+	File* read_file_info(FILE* f);
 	
-	static unsigned int hashfunc(const char* key);
-	std::map<unsigned int, FileHolder*> files;
 };
 
 #endif
